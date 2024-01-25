@@ -38,11 +38,19 @@ class CalendarAppBar extends StatefulWidget implements PreferredSizeWidget {
   ///definition of the atribute which shows full calendar view when pressing on date
   final bool? fullCalendar;
 
-  ///[backButton] shows BackButton in set to true
-  final bool? backButton;
+  ///[showBackButton] shows BackButton in set to true
+  final bool? showBackButton;
 
   ///definiton of the calendar language
   final String? locale;
+
+  ///[textColor] is used for color of unselected text and icons
+  final Color? textColor;
+
+  ///[selectedDateBgColor] is used for color of selected date background
+  final Color? selectedDateBgColor;
+
+
 
   ///initialization of [CalendarAppBar]
   CalendarAppBar({
@@ -53,16 +61,19 @@ class CalendarAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.selectedDate,
     this.events,
     this.fullCalendar,
-    this.backButton,
+    this.showBackButton,
     this.accent,
     this.white,
     this.black,
     this.padding,
     this.locale,
+    this.textColor,
+    this.selectedDateBgColor,
   }) : super(
           key: key,
         ) {
     firstDate ?? DateTime(1950);
+    textColor ?? Colors.white.withOpacity(0.6);
   }
 
   @override
@@ -107,11 +118,18 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
   ///definition of the atribute which shows full calendar view when pressing on date
   late bool fullCalendar;
 
-  ///[backButton] shows BackButton in set to true
-  late bool backButton;
+  ///[showBackButton] shows BackButton in set to true
+  late bool showBackButton;
 
   ///[locale] is used for current local language of the library
   String get _locale => widget.locale ?? 'en';
+
+
+  ///[textColor] is used for color of unselected text and icons
+  Color get textColor => widget.textColor ?? Colors.white.withOpacity(0.6);
+
+  ///[selectedDateBgColor] is used for color of selected date background
+  Color get selectedDateBgColor => widget.selectedDateBgColor ?? Colors.black.withOpacity(0.6);
 
   ///intializing values of atributes which were not defined by user
   @override
@@ -133,7 +151,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
       padding = widget.padding ?? 25.0;
 
       ///initializing backbutton
-      backButton = widget.backButton ?? true;
+      showBackButton = widget.showBackButton ?? true;
 
       ///initializing fullCalendar
       fullCalendar = widget.fullCalendar ?? true;
@@ -294,6 +312,9 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
 
                 ///if position of currently selected is equal to index + 1 (counting of positions starts with 1)
                 bool isSelected = position == index + 1;
+                double dateWidth = MediaQuery.of(context).size.width / 5 - 4.0;
+                dateWidth > 60.0 ? dateWidth = 60.0 : dateWidth = dateWidth;
+                debugPrint("dateWidth: $dateWidth");
 
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
@@ -312,7 +333,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                     ///different UI for nonselected containers and the selected ones
                     ///this is the definition of the main container of calendar card
                     child: Container(
-                      width: MediaQuery.of(context).size.width / 5 - 4.0,
+                      width: dateWidth,
                       child: Align(
                         alignment: Alignment.center,
                         child: Padding(
@@ -320,10 +341,10 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                               vertical: 10.0, horizontal: 5.0),
                           child: Container(
                             height: 120.0,
-                            width: MediaQuery.of(context).size.width / 5 - 4.0,
+                            width: dateWidth,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              color: isSelected ? white : null,
+                              borderRadius: BorderRadius.circular(30.0),
+                              color: isSelected ? selectedDateBgColor : null,
                               boxShadow: [
                                 isSelected
                                     ? BoxShadow(
@@ -370,7 +391,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                                       fontSize: 22.0,
                                       color: isSelected
                                           ? accent
-                                          : white.withOpacity(0.6),
+                                          : textColor,
                                       fontWeight: FontWeight.w500),
                                 ),
                                 SizedBox(height: 5),
@@ -383,7 +404,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                                       fontSize: 12.0,
                                       color: isSelected
                                           ? accent
-                                          : white.withOpacity(0.6),
+                                          : textColor,
                                       fontWeight: FontWeight.w400),
                                 ),
                               ],
@@ -538,28 +559,24 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                 padding: EdgeInsets.symmetric(horizontal: padding),
                 child: Container(
                   width: MediaQuery.of(context).size.width - (padding * 2),
-                  child: backButton
+                  child: showBackButton
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             GestureDetector(
                                 child: Icon(
                                   Icons.arrow_back_ios_rounded,
-                                  color: white,
+                                  color: textColor,
                                 ),
                                 onTap: () => Navigator.pop(context)),
                             GestureDetector(
                               onTap: () => fullCalendar
                                   ? showFullCalendar(_locale)
                                   : null,
-                              child: Text(
-                                DateFormat.yMMMM(Locale(_locale).toString())
-                                    .format(selectedDate),
-                                style: TextStyle(
-                                    fontSize: 20.0,
-                                    color: white,
-                                    fontWeight: FontWeight.w400),
-                              ),
+                              child: Icon(
+                                Icons.calendar_month,
+                                color: textColor,
+                              )
                             ),
                           ],
                         )
@@ -570,13 +587,9 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                               onTap: () => fullCalendar
                                   ? showFullCalendar(_locale)
                                   : null,
-                              child: Text(
-                                DateFormat.yMMMM(Locale(_locale).toString())
-                                    .format(selectedDate),
-                                style: TextStyle(
-                                    fontSize: 20.0,
-                                    color: white,
-                                    fontWeight: FontWeight.w400),
+                              child: Icon(
+                                Icons.calendar_month,
+                                color: textColor,
                               ),
                             ),
                           ],

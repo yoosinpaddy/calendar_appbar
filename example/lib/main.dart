@@ -40,6 +40,11 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: CalendarAppBar(
         onDateChanged: (value) => setState(() => selectedDate = value),
         lastDate: DateTime.now(),
+        accent: Colors.white,
+        textColor: Colors.black.withOpacity(0.6),
+        selectedDateBgColor: Color.fromRGBO(243, 59, 163, 1),
+        showBackButton: false,
+
         events: List.generate(
             100,
             (index) => DateTime.now()
