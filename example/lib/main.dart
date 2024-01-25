@@ -43,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
         accent: Colors.white,
         textColor: Colors.black.withOpacity(0.6),
         selectedDateBgColor: Color.fromRGBO(243, 59, 163, 1),
-        showBackButton: false,
+        showBackButton: true,
 
         events: List.generate(
             100,
